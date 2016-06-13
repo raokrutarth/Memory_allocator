@@ -304,7 +304,9 @@ void * allocateObject( size_t size )
 void freeObject( void * ptr )
 {
   // *** Add your code here! ***
-	//
+	//need to traverse the memory blocks LL
+	//coscale if needed
+	//set allocated to 0 in footer and header
 
   return;
 
