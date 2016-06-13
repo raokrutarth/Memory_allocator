@@ -19,26 +19,24 @@
 #include <pthread.h>
 #include "MyMalloc.h"
 
-static pthread_mutex_t mutex;
-
+static pthread_mutex_t mutex; //used to "lock" methods so only one thread uses it at at time. un-sync using "unlock"
 const int ArenaSize = 2097152;
 const int NumberOfFreeLists = 1;
 
 // Header of an object. Used both when the object is allocated and freed
-struct ObjectHeader {
+struct ObjectHeader 
+{
     size_t _objectSize;         // Real size of the object.
     int _allocated;             // 1 = yes, 0 = no 2 = sentinel
     struct ObjectHeader * _next;       // Points to the next object in the freelist (if free).
     struct ObjectHeader * _prev;       // Points to the previous object.
 };
-
-struct ObjectFooter {
+struct ObjectFooter 
+{
     size_t _objectSize;
     int _allocated;
 };
-
   //STATE of the allocator
-
   // Size of the heap
   static size_t _heapSize;
   // initial memory pool
@@ -57,7 +55,6 @@ struct ObjectFooter {
   static int _reallocCalls;  
   // # realloc calls
   static int _callocCalls;
-
   // Free list is a sentinel
   static struct ObjectHeader _freeListSentinel; // Sentinel is used to simplify list operations
   static struct ObjectHeader *_freeList;
@@ -81,15 +78,11 @@ struct ObjectFooter {
   // Gets memory from the OS
   void * getMemoryFromOS( size_t size );
   void increaseMallocCalls() { _mallocCalls++; }
-
   void increaseReallocCalls() { _reallocCalls++; }
-
   void increaseCallocCalls() { _callocCalls++; }
-
   void increaseFreeCalls() { _freeCalls++; }
 
-extern void
-atExitHandlerInC()
+extern void atExitHandlerInC()
 {
   atExitHandler();
 }
@@ -147,8 +140,7 @@ void * tryAllocate(int roundedSize)
 	{      
       //can we split it?
       if((currentHeader->_objectSize-roundedSize) > (sizeof(struct ObjectHeader)+sizeof(struct ObjectFooter)+8))
-	  {
-        
+	  {        
         //yes, the remainder is large enough to split.
         char * splitBlock = (char *)currentHeader + roundedSize;
         struct ObjectHeader * splitHeader = (struct ObjectHeader *)splitBlock;
@@ -182,11 +174,9 @@ void * tryAllocate(int roundedSize)
         //otherwise, just return the current block.
         currentHeader->_prev->_next = currentHeader->_next;
 	    currentHeader->_next->_prev = currentHeader->_prev;
-
         currentHeader->_next = NULL;
         currentHeader->_prev = NULL;
         currentHeader->_allocated = 1;
-
         char * temp = (char *)currentHeader + currentHeader->_objectSize - sizeof(struct ObjectFooter);
         struct ObjectFooter * currentFooter = (struct ObjectFooter *) temp;
         currentFooter->_allocated = 1;
@@ -196,8 +186,7 @@ void * tryAllocate(int roundedSize)
     }    
     //endif
     currentHeader = currentHeader->_next;
-  } //endwhile
-  
+  } //endwhile  
   return NULL;
 }
 
@@ -206,11 +195,11 @@ void * allocateObject( size_t size )
     // Simple implementation
 
     //Make sure that allocator is initialized
-    if ( !_initialized ) {
+    if ( !_initialized ) 
+	{
         _initialized = 1;
-    initialize();
+    	initialize();
     }
-
     if( size == 0 ){ size = 1; }
     size_t roundedSize = (size + sizeof(struct ObjectHeader) + sizeof(struct ObjectFooter) + 7) & ~7;
     void * retvalue = tryAllocate(roundedSize);
@@ -219,7 +208,6 @@ void * allocateObject( size_t size )
         pthread_mutex_unlock(&mutex);
         return retvalue;
     }
-
     //if we made it here, the allocator has run out of memory or cannot satisfy the request
     //GET MORE MEMORY!
     int osRequestedSize = ArenaSize;
@@ -306,7 +294,8 @@ void print()
 void print_list()
 {
   printf("FreeList: ");
-  if ( !_initialized ) {
+  if ( !_initialized ) 
+  {
     _initialized = 1;
     initialize();
   }
@@ -325,16 +314,10 @@ void print_list()
 void * getMemoryFromOS( size_t size )
 {
   // Use sbrk() to get memory from OS
-  _heapSize += size;
- 
+  _heapSize += size; 
   void * _mem = sbrk( size );
-
-  if(!_initialized){
-      _memStart = _mem;
-  }
-
+  if(!_initialized){ _memStart = _mem; }
   _numChunks++;
-
   return _mem;
 }
 
