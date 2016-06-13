@@ -100,28 +100,22 @@ void initialize()
   // Default is on
   _verbose = 1;
   const char * envverbose = getenv( "MALLOCVERBOSE" );
-  if ( envverbose && !strcmp( envverbose, "NO") ) {
-    _verbose = 0;
-  }
+  if ( envverbose && !strcmp( envverbose, "NO") ) { _verbose = 0; }
 
   pthread_mutex_init(&mutex, NULL);
   void * _mem = getMemoryFromOS( ArenaSize + (2*sizeof(struct ObjectHeader)) + (2*sizeof(struct ObjectFooter)) );
-
   // In verbose mode register also printing statistics at exit
   atexit( atExitHandlerInC );
-
   //establish fence posts
   struct ObjectFooter * fencepost1 = (struct ObjectFooter *)_mem;
   fencepost1->_allocated = 1;
   fencepost1->_objectSize = 123456789;
-  char * temp = 
-      (char *)_mem + (2*sizeof(struct ObjectFooter)) + sizeof(struct ObjectHeader) + ArenaSize;
+  char * temp = (char *)_mem + (2*sizeof(struct ObjectFooter)) + sizeof(struct ObjectHeader) + ArenaSize;
   struct ObjectHeader * fencepost2 = (struct ObjectHeader *)temp;
   fencepost2->_allocated = 1;
   fencepost2->_objectSize = 123456789;
   fencepost2->_next = NULL;
   fencepost2->_prev = NULL;
-
   //initialize the list to point to the _mem
   temp = (char *) _mem + sizeof(struct ObjectFooter);
   struct ObjectHeader * currentHeader = (struct ObjectHeader *) temp;
@@ -142,16 +136,18 @@ void initialize()
 }
 
 // Attempts to allocate a block to satisfy a memory request. If unsuccessful, returns NULL
-void * tryAllocate(int roundedSize){
+void * tryAllocate(int roundedSize)
+{
   struct ObjectHeader * currentHeader = _freeList->_next;
-  while(currentHeader != _freeList){
-    
+  while(currentHeader != _freeList)
+  {    
     //Let's examine the current object:
     //is it big enough?
-    if(currentHeader->_objectSize >= roundedSize){
-      
+    if(currentHeader->_objectSize >= roundedSize)
+	{      
       //can we split it?
-      if((currentHeader->_objectSize-roundedSize) > (sizeof(struct ObjectHeader)+sizeof(struct ObjectFooter)+8)){
+      if((currentHeader->_objectSize-roundedSize) > (sizeof(struct ObjectHeader)+sizeof(struct ObjectFooter)+8))
+	  {
         
         //yes, the remainder is large enough to split.
         char * splitBlock = (char *)currentHeader + roundedSize;
@@ -181,8 +177,8 @@ void * tryAllocate(int roundedSize){
         char * returnMem = (char *) currentHeader + sizeof(struct ObjectHeader);
         return (void *) returnMem;
       }
-      else{
-        
+      else
+	  {        
         //otherwise, just return the current block.
         currentHeader->_prev->_next = currentHeader->_next;
 	    currentHeader->_next->_prev = currentHeader->_prev;
@@ -197,8 +193,7 @@ void * tryAllocate(int roundedSize){
         char * returnMem = (char *) currentHeader + sizeof(struct ObjectHeader);
         return (void *) returnMem;
       }
-    }
-    
+    }    
     //endif
     currentHeader = currentHeader->_next;
   } //endwhile
@@ -216,13 +211,11 @@ void * allocateObject( size_t size )
     initialize();
     }
 
-    if( size == 0 ){
-        size = 1;
-    }
-
+    if( size == 0 ){ size = 1; }
     size_t roundedSize = (size + sizeof(struct ObjectHeader) + sizeof(struct ObjectFooter) + 7) & ~7;
     void * retvalue = tryAllocate(roundedSize);
-    if(retvalue != NULL){
+    if(retvalue != NULL)
+	{
         pthread_mutex_unlock(&mutex);
         return retvalue;
     }
@@ -230,13 +223,12 @@ void * allocateObject( size_t size )
     //if we made it here, the allocator has run out of memory or cannot satisfy the request
     //GET MORE MEMORY!
     int osRequestedSize = ArenaSize;
-    if (osRequestedSize < size) {
+    if (osRequestedSize < size) 
+	{
         // requested size is larger than memorySize
         osRequestedSize = size;
-    }
-    
-    void * _mem = getMemoryFromOS( osRequestedSize + (2*sizeof(struct ObjectHeader)) + (2*sizeof(struct ObjectFooter)) ); 
-  
+    }    
+    void * _mem = getMemoryFromOS( osRequestedSize + (2*sizeof(struct ObjectHeader)) + (2*sizeof(struct ObjectFooter)) );   
     //establish fence posts
     struct ObjectFooter * fencepost1 = (struct ObjectFooter *)_mem;
     fencepost1->_allocated = 1;
@@ -247,40 +239,36 @@ void * allocateObject( size_t size )
     fencepost2->_allocated = 1;
     fencepost2->_objectSize = 123456789;
     fencepost2->_next = NULL;
-    fencepost2->_prev = NULL;
-  
+    fencepost2->_prev = NULL;  
     //initialize the new chunk
     temp = (char *) _mem + sizeof(struct ObjectFooter);
     struct ObjectHeader * newBlockHeader = (struct ObjectHeader *) temp;
     temp = (char *)_mem + sizeof(struct ObjectFooter) + sizeof(struct ObjectHeader) + ArenaSize;
-    struct ObjectFooter * newBlockFooter = (struct ObjectFooter *) temp;
-  
+    struct ObjectFooter * newBlockFooter = (struct ObjectFooter *) temp;  
     newBlockHeader->_objectSize = ArenaSize + sizeof(struct ObjectHeader) + sizeof(struct ObjectFooter); //2MB
     newBlockHeader->_allocated = 0;
     newBlockHeader->_next = NULL;
     newBlockHeader->_prev = NULL;
     newBlockFooter->_allocated = 0;
     newBlockFooter->_objectSize = newBlockHeader->_objectSize;
-
     // Put the block in order for printing
     struct ObjectHeader * insertPtr = _freeList->_next;
-    while(insertPtr->_next != _freeList && insertPtr < newBlockHeader) {
+    while(insertPtr->_next != _freeList && insertPtr < newBlockHeader) 
+	{
         insertPtr = insertPtr->_next;
     }
-
     // Link
     newBlockHeader->_next = insertPtr;
     newBlockHeader->_prev = insertPtr->_prev;
     insertPtr->_prev->_next = newBlockHeader;
-    insertPtr->_prev = newBlockHeader;
-  
+    insertPtr->_prev = newBlockHeader;  
     //try again
     retvalue = tryAllocate(roundedSize);
-    if(retvalue != NULL){
+    if(retvalue != NULL)
+	{
         pthread_mutex_unlock(&mutex);
         return retvalue;
     }
-
     fprintf(stderr,"CANNOT SATISFY MEMORY REQUEST. RETHINK YOUR CHOICES!\n");
     pthread_mutex_unlock(&mutex);
     return NULL;
@@ -297,9 +285,7 @@ void freeObject( void * ptr )
 size_t objectSize( void * ptr )
 {
   // Return the size of the object pointed by ptr. We assume that ptr is a valid obejct.
-  struct ObjectHeader * o =
-    (struct ObjectHeader *) ( (char *) ptr - sizeof(struct ObjectHeader) );
-
+  struct ObjectHeader * o = (struct ObjectHeader *) ( (char *) ptr - sizeof(struct ObjectHeader) );
   // Substract the size of the header
   return o->_objectSize;
 }
@@ -364,8 +350,7 @@ void atExitHandler()
 // C interface
 //
 
-extern void *
-malloc(size_t size)
+extern void * malloc(size_t size)
 {
   pthread_mutex_lock(&mutex);
   increaseMallocCalls();
@@ -373,8 +358,7 @@ malloc(size_t size)
   return allocateObject( size );
 }
 
-extern void
-free(void *ptr)
+extern void free(void *ptr)
 {
   pthread_mutex_lock(&mutex);
   increaseFreeCalls();
@@ -388,18 +372,14 @@ free(void *ptr)
   freeObject( ptr );
 }
 
-extern void *
-realloc(void *ptr, size_t size)
+extern void * realloc(void *ptr, size_t size)
 {
   pthread_mutex_lock(&mutex);
-  increaseReallocCalls();
-    
+  increaseReallocCalls();    
   // Allocate new object
   void * newptr = allocateObject( size );
-
   // Copy old object only if ptr != 0
-  if ( ptr != 0 ) {
-    
+  if ( ptr != 0 ) {    
     // copy only the minimum number of bytes
     size_t sizeToCopy =  objectSize( ptr );
     if ( sizeToCopy > size ) {
@@ -415,8 +395,7 @@ realloc(void *ptr, size_t size)
   return newptr;
 }
 
-extern void *
-calloc(size_t nelem, size_t elsize)
+extern void * calloc(size_t nelem, size_t elsize)
 {
   pthread_mutex_lock(&mutex);
   increaseCallocCalls();
