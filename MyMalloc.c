@@ -267,7 +267,7 @@ void freeObject( void * ptr )
 	struct ObjectHeader * currentHeader = _freeList->_next;
     while(currentHeader != _freeList)
 	{
-		if( ptr > &currentHeader
+		
 	}    
 	return;
 
