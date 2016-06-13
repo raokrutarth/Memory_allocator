@@ -221,8 +221,7 @@ void * allocateObject( size_t size )
     struct ObjectFooter * fencepost1 = (struct ObjectFooter *)_mem;
     fencepost1->_allocated = 1;
     fencepost1->_objectSize = 123456789;
-    char * temp =
-    (char *)_mem + (2*sizeof(struct ObjectFooter)) + sizeof(struct ObjectHeader) + ArenaSize;
+    char * temp = (char *)_mem + (2*sizeof(struct ObjectFooter)) + sizeof(struct ObjectHeader) + ArenaSize;
     struct ObjectHeader * fencepost2 = (struct ObjectHeader *)temp;
     fencepost2->_allocated = 1;
     fencepost2->_objectSize = 123456789;
@@ -264,9 +263,13 @@ void * allocateObject( size_t size )
 
 void freeObject( void * ptr )
 {
-  // *** Add your code here! ***
-
-  return;
+	increaseFreeCalls();
+	struct ObjectHeader * currentHeader = _freeList->_next;
+    while(currentHeader != _freeList)
+	{
+		if( ptr > &currentHeader
+	}    
+	return;
 
 }
 
@@ -320,13 +323,10 @@ void * getMemoryFromOS( size_t size )
   _numChunks++;
   return _mem;
 }
-
 void atExitHandler()
 {
   // Print statistics when exit
-  if ( _verbose ) {
-    print();
-  }
+  if ( _verbose ) { print(); }
 }
 
 //
@@ -362,19 +362,18 @@ extern void * realloc(void *ptr, size_t size)
   // Allocate new object
   void * newptr = allocateObject( size );
   // Copy old object only if ptr != 0
-  if ( ptr != 0 ) {    
+  if ( ptr != 0 ) 
+  {    
     // copy only the minimum number of bytes
     size_t sizeToCopy =  objectSize( ptr );
-    if ( sizeToCopy > size ) {
+    if ( sizeToCopy > size ) 
+	{
       sizeToCopy = size;
-    }
-    
+    }    
     memcpy( newptr, ptr, sizeToCopy );
-
     //Free old object
     freeObject( ptr );
   }
-
   return newptr;
 }
 
