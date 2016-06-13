@@ -41,22 +41,31 @@ struct ObjectFooter {
 
   // Size of the heap
   static size_t _heapSize;
+
   // initial memory pool
   static void * _memStart;
+
   // number of chunks request from OS
   static int _numChunks;
+
   // True if heap has been initialized
   static int _initialized;
+
   // Verbose mode
   static int _verbose;
+
   // # malloc calls
   static int _mallocCalls;
+
   // # free calls
   static int _freeCalls;
+
   // # realloc calls
-  static int _reallocCalls;  
+  static int _reallocCalls;
+  
   // # realloc calls
   static int _callocCalls;
+
   // Free list is a sentinel
   static struct ObjectHeader _freeListSentinel; // Sentinel is used to simplify list operations
   static struct ObjectHeader *_freeList;
@@ -66,14 +75,19 @@ struct ObjectFooter {
 
   //Initializes the heap
   void initialize();
+
   // Allocates an object 
   void * allocateObject( size_t size );
+
   // Frees an object
   void freeObject( void * ptr );
+
   // Returns the size of an object
   size_t objectSize( void * ptr );
+
   // At exit handler
   void atExitHandler();
+
   //Prints the heap size and other information about the allocator
   void print();
   void print_list();
@@ -290,9 +304,6 @@ void * allocateObject( size_t size )
 void freeObject( void * ptr )
 {
   // *** Add your code here! ***
-	//need to traverse the memory blocks LL
-	//coscale if needed
-	//set allocated to 0 in footer and header
 
   return;
 
