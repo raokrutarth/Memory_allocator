@@ -26,7 +26,7 @@ const int NumberOfFreeLists = 1;
 // Header of an object. Used both when the object is allocated and freed
 struct ObjectHeader 
 {
-    size_t _objectSize;         // Real size of the object.
+    size_t _objectSize;         // Real size of the object. includes header and footer
     int _allocated;             // 1 = yes, 0 = no 2 = sentinel
     struct ObjectHeader * _next;       // Points to the next object in the freelist (if free).
     struct ObjectHeader * _prev;       // Points to the previous object.
@@ -265,12 +265,45 @@ void freeObject( void * ptr ) /*------------------------------------------------
 {
 	increaseFreeCalls();
 	int freeLeft =0, freeRight=0;
-	struct ObjectHeader *bp, *p;
-	bp = (struct ObjectHeader*)ptr -1;
-	bp->_allocated = 0;
-	bp -= sizeof(struct ObjectFooter);
-	if(bp->_allocated >0)
+	struct ObjectHeader *temph, *toFree, *right, *left;
+	struct ObjectFooter *tempf;
+	temph = (struct ObjectHeader*)ptr -1; //at header
+	toFree = temph;
+	//go to to left block in heap
+	tempf =  (char*)temph - sizeof(struct ObjectFooter); //go to left block's footer
+	left = ( (char *)tempf->_objectSize - sizeof(struct ObjectFooter) );
+	if(left->_allocated <=0)
 		freeLeft = 1;
+	//go to right block in heap
+	temph += sizeof(struct ObjectFooter) + toFree->_objectSize; // skipped left's footer and entire block(toFree)
+	right = temph;
+	if( right->_allocated <= 0)
+		freeRight = 1;
+	if(freeRight && freeLeft)
+	{
+		int c;//coalesce: update left's header size  & right's footer size
+	}		
+	else if( freeRight)
+	{
+		int b;//coalesce: update center header size and right footer size
+	}	
+	else if( freeLeft)
+	{
+		int a;//coalesce: update center footer size and left's header size
+	}
+	else
+	{
+		toFree->_allocated = 0; //set to free. need to update footer as well.
+	}
+	//set toFree to the coalasceed block header
+	//update next and prev pointers in freeList and in new free (coalesced block) after finding right position
+	for (temph = _freeList->_next; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
+		if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
+			break; //temph at block which should be after toFree
+	toFree->_next = temph;
+	toFree->_prev = temph->_prev;
+	temph->_prev->_next = toFree;
+	temph->_prev = toFree;
 }
 
 size_t objectSize( void * ptr )
