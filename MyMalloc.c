@@ -89,43 +89,43 @@ extern void atExitHandlerInC()
 
 void initialize()
 {
-  // Environment var VERBOSE prints stats at end and turns on debugging
-  // Default is on
-  _verbose = 1;
-  const char * envverbose = getenv( "MALLOCVERBOSE" );
-  if ( envverbose && !strcmp( envverbose, "NO") ) { _verbose = 0; }
+    // Environment var VERBOSE prints stats at end and turns on debugging
+    // Default is on
+    _verbose = 1;
+    const char * envverbose = getenv( "MALLOCVERBOSE" );
+    if ( envverbose && !strcmp( envverbose, "NO") ) { _verbose = 0; }
 
-  pthread_mutex_init(&mutex, NULL);
-  void * _mem = getMemoryFromOS( ArenaSize + (2*sizeof(struct ObjectHeader)) + (2*sizeof(struct ObjectFooter)) );
-  // In verbose mode register also printing statistics at exit
-  atexit( atExitHandlerInC );
-  //establish fence posts
-  struct ObjectFooter * fencepost1 = (struct ObjectFooter *)_mem;
-  fencepost1->_allocated = 1;
-  fencepost1->_objectSize = 123456789;
-  char * temp = (char *)_mem + (2*sizeof(struct ObjectFooter)) + sizeof(struct ObjectHeader) + ArenaSize;
-  struct ObjectHeader * fencepost2 = (struct ObjectHeader *)temp;
-  fencepost2->_allocated = 1;
-  fencepost2->_objectSize = 123456789;
-  fencepost2->_next = NULL;
-  fencepost2->_prev = NULL;
-  //initialize the list to point to the _mem
-  temp = (char *) _mem + sizeof(struct ObjectFooter);
-  struct ObjectHeader * currentHeader = (struct ObjectHeader *) temp;
-  temp = (char *)_mem + sizeof(struct ObjectFooter) + sizeof(struct ObjectHeader) + ArenaSize;
-  struct ObjectFooter * currentFooter = (struct ObjectFooter *) temp;
-  _freeList = &_freeListSentinel;
-  currentHeader->_objectSize = ArenaSize + sizeof(struct ObjectHeader) + sizeof(struct ObjectFooter); //2MB
-  currentHeader->_allocated = 0;
-  currentHeader->_next = _freeList;
-  currentHeader->_prev = _freeList;
-  currentFooter->_allocated = 0;
-  currentFooter->_objectSize = currentHeader->_objectSize;
-  _freeList->_prev = currentHeader;
-  _freeList->_next = currentHeader; 
-  _freeList->_allocated = 2; // sentinel. no coalescing.
-  _freeList->_objectSize = 0;
-  _memStart = (char*) currentHeader;
+    pthread_mutex_init(&mutex, NULL);
+    void * _mem = getMemoryFromOS( ArenaSize + (2*sizeof(struct ObjectHeader)) + (2*sizeof(struct ObjectFooter)) );
+    // In verbose mode register also printing statistics at exit
+    atexit( atExitHandlerInC );
+    //establish fence posts
+    struct ObjectFooter * fencepost1 = (struct ObjectFooter *)_mem;
+    fencepost1->_allocated = 1;
+    fencepost1->_objectSize = 123456789;
+    char * temp = (char *)_mem + (2*sizeof(struct ObjectFooter)) + sizeof(struct ObjectHeader) + ArenaSize;
+    struct ObjectHeader * fencepost2 = (struct ObjectHeader *)temp;
+    fencepost2->_allocated = 1;
+    fencepost2->_objectSize = 123456789;
+    fencepost2->_next = NULL;
+    fencepost2->_prev = NULL;
+    //initialize the list to point to the _mem
+    temp = (char *) _mem + sizeof(struct ObjectFooter);
+    struct ObjectHeader * currentHeader = (struct ObjectHeader *) temp;
+    temp = (char *)_mem + sizeof(struct ObjectFooter) + sizeof(struct ObjectHeader) + ArenaSize;
+    struct ObjectFooter * currentFooter = (struct ObjectFooter *) temp;
+    _freeList = &_freeListSentinel;
+    currentHeader->_objectSize = ArenaSize + sizeof(struct ObjectHeader) + sizeof(struct ObjectFooter); //2MB
+    currentHeader->_allocated = 0;
+    currentHeader->_next = _freeList;
+    currentHeader->_prev = _freeList;
+    currentFooter->_allocated = 0;
+    currentFooter->_objectSize = currentHeader->_objectSize;
+    _freeList->_prev = currentHeader;
+    _freeList->_next = currentHeader; 
+    _freeList->_allocated = 2; // sentinel. no coalescing.
+    _freeList->_objectSize = 0;
+    _memStart = (char*) currentHeader;
 }
 
 // Attempts to allocate a block to satisfy a memory request. If unsuccessful, returns NULL
@@ -137,10 +137,10 @@ void * tryAllocate(int roundedSize)
     //Let's examine the current object:
     //is it big enough?
     if(currentHeader->_objectSize >= roundedSize)
-	{      
+	  {      
       //can we split it?
       if((currentHeader->_objectSize-roundedSize) > (sizeof(struct ObjectHeader)+sizeof(struct ObjectFooter)+8))
-	  {        
+	    {        
         //yes, the remainder is large enough to split.
         char * splitBlock = (char *)currentHeader + roundedSize;
         struct ObjectHeader * splitHeader = (struct ObjectHeader *)splitBlock;
@@ -155,7 +155,7 @@ void * tryAllocate(int roundedSize)
 
 	    // Update pointers to this block
         splitHeader->_prev->_next = splitHeader;
-	    splitHeader->_next->_prev = splitHeader;
+	      splitHeader->_next->_prev = splitHeader;
 
         //return the current block (split from the remainder)
         currentHeader->_objectSize = roundedSize;
@@ -170,10 +170,10 @@ void * tryAllocate(int roundedSize)
         return (void *) returnMem;
       }
       else
-	  {        
+      {        
         //otherwise, just return the current block.
         currentHeader->_prev->_next = currentHeader->_next;
-	    currentHeader->_next->_prev = currentHeader->_prev;
+	      currentHeader->_next->_prev = currentHeader->_prev;
         currentHeader->_next = NULL;
         currentHeader->_prev = NULL;
         currentHeader->_allocated = 1;
@@ -196,7 +196,7 @@ void * allocateObject( size_t size )
 
     //Make sure that allocator is initialized
     if ( !_initialized ) 
-	{
+    {
         _initialized = 1;
     	initialize();
     }
@@ -204,7 +204,7 @@ void * allocateObject( size_t size )
     size_t roundedSize = (size + sizeof(struct ObjectHeader) + sizeof(struct ObjectFooter) + 7) & ~7;
     void * retvalue = tryAllocate(roundedSize);
     if(retvalue != NULL)
-	{
+    {
         pthread_mutex_unlock(&mutex);
         return retvalue;
     }
@@ -212,7 +212,7 @@ void * allocateObject( size_t size )
     //GET MORE MEMORY!
     int osRequestedSize = ArenaSize;
     if (osRequestedSize < size) 
-	{
+    {
         // requested size is larger than memorySize
         osRequestedSize = size;
     }    
@@ -241,7 +241,7 @@ void * allocateObject( size_t size )
     // Put the block in order for printing
     struct ObjectHeader * insertPtr = _freeList->_next;
     while(insertPtr->_next != _freeList && insertPtr < newBlockHeader) 
-	{
+    {
         insertPtr = insertPtr->_next;
     }
     // Link
@@ -252,7 +252,7 @@ void * allocateObject( size_t size )
     //try again
     retvalue = tryAllocate(roundedSize);
     if(retvalue != NULL)
-	{
+  	{
         pthread_mutex_unlock(&mutex);
         return retvalue;
     }
@@ -264,13 +264,28 @@ void * allocateObject( size_t size )
 void freeObject( void * ptr )
 {
 	increaseFreeCalls();
-	struct ObjectHeader * currentHeader = _freeList->_next;
-    while(currentHeader != _freeList)
-	{
-		
-	}    
-	return;
-
+	struct ObjectHeader *bp, *p;
+  bp = (struct ObjectHeader*)ptr -1;
+  for( p = _freeList->_next; !(bp > p && bp < p->_next); p = p->_next)
+  {
+    if( p > p->_next && (bp > p || bp < p->_next) )
+      break;
+  }
+  if (bp + bp->_objectSize == p->_next)
+  {
+    bp->_objectSize = bp->_objectSize + p->_next->_objectSize;
+    bp->_next = p->_next->_next;
+  }
+  else
+    bp->_next = p->_next;
+  if(p + p->_objectSize == bp)
+  {
+    p->_objectSize += bp->_objectSize;
+    p->_next = bp->_next;
+  }
+  else
+    p->_next = bp;
+  _freeList = p;
 }
 
 size_t objectSize( void * ptr )
