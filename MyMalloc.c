@@ -261,31 +261,16 @@ void * allocateObject( size_t size )
     return NULL;
 }
 
-void freeObject( void * ptr )
+void freeObject( void * ptr ) /*--------------------------------------------------------------------*/
 {
 	increaseFreeCalls();
+	int freeLeft =0, freeRight=0;
 	struct ObjectHeader *bp, *p;
-  bp = (struct ObjectHeader*)ptr -1;
-  for( p = _freeList->_next; !(bp > p && bp < p->_next); p = p->_next)
-  {
-    if( p > p->_next && (bp > p || bp < p->_next) )
-      break;
-  }
-  if (bp + bp->_objectSize == p->_next)
-  {
-    bp->_objectSize = bp->_objectSize + p->_next->_objectSize;
-    bp->_next = p->_next->_next;
-  }
-  else
-    bp->_next = p->_next;
-  if(p + p->_objectSize == bp)
-  {
-    p->_objectSize += bp->_objectSize;
-    p->_next = bp->_next;
-  }
-  else
-    p->_next = bp;
-  _freeList = p;
+	bp = (struct ObjectHeader*)ptr -1;
+	bp->_allocated = 0;
+	bp -= sizeof(struct ObjectFooter);
+	if(bp->_allocated >0)
+		freeLeft = 1;
 }
 
 size_t objectSize( void * ptr )
