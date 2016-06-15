@@ -276,10 +276,9 @@ void freeObject( void * ptr ) /*################################################
 	if(tempf->_allocated <=0)
 		freeLeft = 1;
 	//go to right block in heap
-	temph = (char*)temph + toFree->_objectSize; 
+	right = (char*)temph + toFree->_objectSize; 
 	// skipped left's footer and entire block(toFree)
-	right = temph;
-	if( temph->_allocated <= 0)
+	if( right->_allocated <= 0)
 		freeRight = 1;
 	if(freeRight && freeLeft)
 	{
