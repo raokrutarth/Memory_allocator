@@ -281,8 +281,12 @@ void freeObject( void * ptr ) /*------------------------------------------------
 		freeRight = 1;
 	if(freeRight && freeLeft)
 	{
-		int c;//coalesce: update left's header size  & right's footer size
-	}		
+    //coalesce: update left's header size  & right's footer size
+    left->_objectSize += right->_objectSize + left->_objectSize;
+    tempf += (toFree->_objectSize + right->_objectSize) - 2*sizeof(struct ObjectFooter);
+    tempf->_objectSize = left->_objectSize;
+  }   
+		 
 	else if( freeRight)
 	{
 		int b;//coalesce: update center header size and right footer size
