@@ -290,7 +290,7 @@ void freeObject( void * ptr ) /*################################################
 	{
 		//coalesce: update center header size and right footer size
 		toFree->_objectSize += right->_objectSize;
-		//tempf += (toFree->_objectSize + right->_objectSize) ;//- sizeof(struct ObjectFooter);
+		tempf += (toFree->_objectSize + right->_objectSize) ;//- sizeof(struct ObjectFooter);
 		tempf->_objectSize = toFree->_objectSize;
 		toFree->_allocated = 0;
 	}	
@@ -319,7 +319,6 @@ void freeObject( void * ptr ) /*################################################
 	temph->_prev->_next = toFree;
 	temph->_prev = toFree;
 }
-
 size_t objectSize( void * ptr )
 {
   // Return the size of the object pointed by ptr. We assume that ptr is a valid obejct.
