@@ -299,7 +299,7 @@ void freeObject( void * ptr ) /*################################################
 	{
 		//coalesce: update center footer size and left's header size
 		tempf = (char*)tempf + toFree->_objectSize - sizeof(struct ObjectHeader);
-		tempf->_objectSize += left->_objectSize;
+		tempf->_objectSize += toFree->_objectSize;
 		tempf->_allocated = 0;
 		left->_objectSize += toFree->_objectSize;
 		toFree = left;
