@@ -291,6 +291,7 @@ void freeObject( void * ptr ) /*################################################
 	{
 		//coalesce: update center header size and right footer size
 		toFree->_objectSize += right->_objectSize;
+		//move tempf to right footer
 		tempf = (char*)right + right->_objectSize- sizeof(struct ObjectFooter);
 		tempf->_objectSize = toFree->_objectSize;
 		toFree->_allocated = 0;
@@ -298,17 +299,19 @@ void freeObject( void * ptr ) /*################################################
 	else if( freeLeft)
 	{
 		//coalesce: update center footer size and left's header size
-		tempf = (char*)tempf + toFree->_objectSize - sizeof(struct ObjectHeader);
-		tempf->_objectSize += toFree->_objectSize;
+		//move tempf to center footer
+		tempf = (char*)tempf + toFree->_objectSize;
+		tempf->_objectSize += left->_objectSize;
 		tempf->_allocated = 0;
 		left->_objectSize += toFree->_objectSize;
 		toFree = left;
 	}
 	else
 	{
+		//move tempf to center footer
 		tempf += toFree->_objectSize -sizeof(struct ObjectHeader);
 		tempf->_allocated = 0;
-		toFree->_allocated = 0; //set to free. need to update footer as well.
+		toFree->_allocated = 0;
 	}
 	//toFree = the coalasced block header
 	//update next and prev pointers in freeList and in new free (coalesced block) after finding right position
