@@ -314,11 +314,11 @@ void freeObject( void * ptr ) /*################################################
 	//update next and prev pointers in freeList and in new free (coalesced block) after finding right position
 	for (temph = _freeList->_next; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
 		if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
-			break; //temph at block which should be after toFree
-	toFree->_next = temph;
-	toFree->_prev = temph->_prev;
-	temph->_prev->_next = toFree;
-	temph->_prev = toFree;
+			break; //temph at block which should be after toFree	
+	toFree->_prev = temph;//toFree->_prev = temph->_prev;
+	toFree->_next = temph->_next;//temph->_prev->_next = toFree;
+	temph->_next = toFree;//toFree->_next = temph;
+	//temph->_prev = toFree;
 }
 size_t objectSize( void * ptr )
 {
