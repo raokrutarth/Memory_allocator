@@ -322,7 +322,6 @@ void freeObject( void * ptr ) /*################################################
 	toFree->_prev = temph;//toFree->_prev = temph->_prev;
 	toFree->_next = temph->_next;//temph->_prev->_next = toFree;
 	temph->_next = toFree;//toFree->_next = temph;
-	_freeList->_next = toFree;
 	//temph->_prev = toFree;
 }
 size_t objectSize( void * ptr )
