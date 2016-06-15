@@ -308,8 +308,8 @@ void freeObject( void * ptr ) /*################################################
 	}
 	else
 	{
-		//move tempf to center footer
-		tempf += toFree->_objectSize -sizeof(struct ObjectHeader);
+		//move tempf to center footer              
+		tempf = (char*)toFree + toFree->_objectSize - sizeof(struct ObjectFooter);
 		tempf->_allocated = 0;
 		toFree->_allocated = 0;
 	}
