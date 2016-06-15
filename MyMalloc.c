@@ -309,7 +309,7 @@ void freeObject( void * ptr ) /*------------------------------------------------
     tempf->_allocated = 0;
 		toFree->_allocated = 0; //set to free. need to update footer as well.
 	}
-	//set toFree to the coalasceed block header
+	//toFree = the coalasced block header
 	//update next and prev pointers in freeList and in new free (coalesced block) after finding right position
 	for (temph = _freeList->_next; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
 		if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
