@@ -272,7 +272,7 @@ void freeObject( void * ptr ) /*------------------------------------------------
 	//go to to left block in heap
 	tempf =  (char*)temph - sizeof(struct ObjectFooter); //go to left block's footer
 	left = ( (char *)tempf->_objectSize - sizeof(struct ObjectFooter) );
-	if(left->_allocated <=0)
+	if(tempf->_allocated <=0)
 		freeLeft = 1;
 	//go to right block in heap
 	temph += sizeof(struct ObjectFooter) + toFree->_objectSize; // skipped left's footer and entire block(toFree)
