@@ -5,7 +5,7 @@ all: MyMalloc.so test0 test1 test1-1 test1-2 test1-3 test1-4 test1 test2 test3 t
 
 MyMalloc.so: MyMalloc.c
 	$(CC) -fPIC -c -g MyMalloc.c
-	gcc -shared -o MyMalloc.so MyMalloc.o
+	gcc -shared -o -w MyMalloc.so MyMalloc.o
 
 test0: test0.c MyMalloc.c
 	$(CC) -o test0 test0.c MyMalloc.c
