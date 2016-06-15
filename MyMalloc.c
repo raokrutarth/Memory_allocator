@@ -261,7 +261,7 @@ void * allocateObject( size_t size )
     return NULL;
 }
 
-void freeObject( void * ptr ) /*--------------------------------------------------------------------*/
+void freeObject( void * ptr ) /*###########################################################*/
 {
 	increaseFreeCalls();
 	int freeLeft =0, freeRight=0;
@@ -281,32 +281,32 @@ void freeObject( void * ptr ) /*------------------------------------------------
 		freeRight = 1;
 	if(freeRight && freeLeft)
 	{
-    //coalesce: update left's header size  & right's footer size
-    left->_objectSize += right->_objectSize + left->_objectSize;
-    tempf += (toFree->_objectSize + right->_objectSize) - 2*sizeof(struct ObjectFooter);
-    tempf->_objectSize = left->_objectSize;
-  }   		 
+		//coalesce: update left's header size  & right's footer size
+		left->_objectSize += right->_objectSize + left->_objectSize;
+		tempf += (toFree->_objectSize + right->_objectSize) - 2*sizeof(struct ObjectFooter);
+		tempf->_objectSize = left->_objectSize;
+  	}   		 
 	else if( freeRight)
 	{
 		//coalesce: update center header size and right footer size
-    toFree->_objectSize += right->_objectSize;
-    tempf += (toFree->_objectSize + right->_objectSize) ;//- sizeof(struct ObjectFooter);
-    tempf->_objectSize = toFree->_objectSize;
-    toFree->_allocated = 0;
+		toFree->_objectSize += right->_objectSize;
+		//tempf += (toFree->_objectSize + right->_objectSize) ;//- sizeof(struct ObjectFooter);
+		tempf->_objectSize = toFree->_objectSize;
+		toFree->_allocated = 0;
 	}	
 	else if( freeLeft)
 	{
 		//coalesce: update center footer size and left's header size
-    tempf += toFree->_objectSize -sizeof(struct ObjectHeader);
-    tempf->_objectSize += left->_objectSize;
-    tempf->_allocated = 0;
-    left->_objectSize += toFree->_objectSize;
-    toFree = left;
+		tempf += toFree->_objectSize -sizeof(struct ObjectHeader);
+		tempf->_objectSize += left->_objectSize;
+		tempf->_allocated = 0;
+		left->_objectSize += toFree->_objectSize;
+		toFree = left;
 	}
 	else
 	{
-    tempf += toFree->_objectSize -sizeof(struct ObjectHeader);
-    tempf->_allocated = 0;
+		tempf += toFree->_objectSize -sizeof(struct ObjectHeader);
+		tempf->_allocated = 0;
 		toFree->_allocated = 0; //set to free. need to update footer as well.
 	}
 	//toFree = the coalasced block header
