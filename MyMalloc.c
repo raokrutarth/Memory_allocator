@@ -270,7 +270,8 @@ void freeObject( void * ptr ) /*################################################
 	temph = (struct ObjectHeader*)ptr -1; //at header
 	toFree = temph;
 	//go to to left block in heap
-	tempf =  (char*)temph - sizeof(struct ObjectFooter); //go to left block's footer
+	//tempf =  left block's footer
+	tempf =  (char*)temph - sizeof(struct ObjectFooter); 
 	left = (char*)temph - tempf->_objectSize ;
 	if(tempf->_allocated <=0)
 		freeLeft = 1;
@@ -321,6 +322,7 @@ void freeObject( void * ptr ) /*################################################
 	toFree->_prev = temph;//toFree->_prev = temph->_prev;
 	toFree->_next = temph->_next;//temph->_prev->_next = toFree;
 	temph->_next = toFree;//toFree->_next = temph;
+	_freeList->_next = toFree;
 	//temph->_prev = toFree;
 }
 size_t objectSize( void * ptr )
