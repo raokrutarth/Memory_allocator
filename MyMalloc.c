@@ -286,6 +286,7 @@ void freeObject( void * ptr ) /*################################################
 		left->_objectSize += right->_objectSize + toFree->_objectSize;
 		tempf = (char*)right + right->_objectSize- sizeof(struct ObjectFooter);
 		tempf->_objectSize = left->_objectSize;
+    toFree = left;
   	}   		 
 	else if( freeRight)
 	{
@@ -318,11 +319,10 @@ void freeObject( void * ptr ) /*################################################
 	for (temph = _freeList->_next; temph != _freeList; temph = temph->_next)
 		if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
 			break; //temph at block which should be after toFree	
-	toFree->_prev = temph;//toFree->_prev = temph->_prev;
-	toFree->_next = temph->_next;//temph->_prev->_next = toFree;
+	toFree->_prev = temph;
+	toFree->_next = temph->_next;
   temph->_next->_prev = toFree;
-	temph->_next = toFree;//toFree->_next = temph;
-	//temph->_prev = toFree;
+	temph->_next = toFree;
 }
 size_t objectSize( void * ptr )
 {
