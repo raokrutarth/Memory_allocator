@@ -263,7 +263,7 @@ void * allocateObject( size_t size )
 struct ObjectHeader * getPlace(struct ObjectHeader *toFree)
 {
   struct ObjectHeader *temph;
-  for ( temph = _freeList; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
+  for ( temph = _freeList; temph != _freeList; temph = temph->_next)
     if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
       return temph;
 }
