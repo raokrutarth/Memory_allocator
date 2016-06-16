@@ -278,9 +278,9 @@ void insertFree(struct ObjectHeader * toFree)
 void insertFree_R(struct ObjectHeader * toFree)
 {
   struct ObjectHeader *temph = getPlace(toFree);  
-  toFree->_next = temph->_next->_next;
+  toFree->_next = temph->_next->_next->_next;
   toFree->_prev = temph;
-  temph->_next->_next->_prev = toFree;
+  temph->_next->_next->_next->_prev = toFree;
   temph->_next = toFree;
 }
 void insertFree_LR(struct ObjectHeader * toFree)
@@ -383,7 +383,7 @@ void print_list()
   struct ObjectHeader * ptr = _freeList->_next;
   while(ptr != _freeList){
       long offset = (long)ptr - (long)_memStart;
-      //printf("[offset:%ld,size:%zd]",offset,ptr->_objectSize);
+      printf("[offset:%ld,size:%zd]",offset,ptr->_objectSize);
       ptr = ptr->_next;
       if(ptr != NULL){
           printf("->");
