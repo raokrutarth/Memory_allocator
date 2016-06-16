@@ -383,7 +383,7 @@ void print_list()
   struct ObjectHeader * ptr = _freeList->_next;
   while(ptr != _freeList){
       long offset = (long)ptr - (long)_memStart;
-      printf("[offset:%ld,size:%zd]",offset,ptr->_objectSize);
+      //printf("[offset:%ld,size:%zd]",offset,ptr->_objectSize);
       ptr = ptr->_next;
       if(ptr != NULL){
           printf("->");
