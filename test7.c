@@ -7,7 +7,7 @@ int allocations =10000;
 
 int
 main( int argc, char **argv )
-{/*
+{
 
   printf("\n---- Running test7 ---\n");
   printf("Allocate many objects\n");
@@ -36,7 +36,7 @@ main( int argc, char **argv )
     ptrs[i] = p1;
     *p1 = 100;
   }
-  print_list();*/
+  print_list();
   exit( 0 );
 }
 
