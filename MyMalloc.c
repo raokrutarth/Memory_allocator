@@ -269,7 +269,7 @@ struct ObjectHeader * getPlace(struct ObjectHeader *toFree)
 }
 void insertFree(struct ObjectHeader * toFree)
 {
-  struct ObjectHeader *temph = getPlace(toFree); //temph at block which should be after toFree  
+  struct ObjectHeader *temph = getPlace(toFree); //temph = block which should be before toFree  
   toFree->_next = temph->_next;
   toFree->_prev = temph;
   temph->_next->_prev = toFree;
@@ -347,7 +347,7 @@ void freeObject( void * ptr ) /*################################################
 	  else if (freeRight)
 		insertFree_R(toFree, right);
 	  else if(!freeLeft)
-		fprintf(stderr,"insert   LR\n");//insertFree(toFree);
+		insertFree(toFree);
 	/* fprintf(stderr,"insert   LR\n");//  */
 }
 size_t objectSize( void * ptr )
