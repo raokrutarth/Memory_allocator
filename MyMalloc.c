@@ -320,7 +320,7 @@ void freeObject( void * ptr ) /*################################################
     if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
       break; //temph at block which should be after toFree	*/
   temph = _freeList->_next;
-  while ( temph->_next != _freeList && temph->_next < toFree)
+  while ( temph->_next != _freeList && temph < toFree)
     temph = temph->_next;
 
 	toFree->_next = temph->_next;
