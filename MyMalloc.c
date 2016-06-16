@@ -285,7 +285,7 @@ void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 }
 void insertFree_LR(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
-  struct ObjectHeader *temph = getPlace(toFree);  
+  //struct ObjectHeader *temph = getPlace(toFree);  
   toFree->_next = right->_next;
   right->_next->_prev = toFree;
 }
@@ -342,8 +342,6 @@ void freeObject( void * ptr ) /*################################################
 		tempf->_allocated = 0;
 		toFree->_allocated = 0;
 	}
-	//toFree = the coalasced block header
-	//update next and prev pointers in freeList and in new free (coalesced block) after finding right position
   if (freeLeft && freeRight)  
     insertFree_LR(toFree, right);
   else if (freeRight)
