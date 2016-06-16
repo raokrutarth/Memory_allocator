@@ -260,36 +260,34 @@ void * allocateObject( size_t size )
     pthread_mutex_unlock(&mutex);
     return NULL;
 }
-void insertFree(struct ObjectHeader * toFree)
+struct ObjectHeader * getPlace(struct ObjectHeader *toFree)
 {
   struct ObjectHeader *temph;
-  for (temph = _freeList; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
+  for ( temph = _freeList; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
     if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
-      break; //temph at block which should be after toFree  
-    toFree->_next = temph->_next;
-    toFree->_prev = temph;
-    temph->_next->_prev = toFree;
-    temph->_next = toFree;
+      return temph;
+}
+void insertFree(struct ObjectHeader * toFree)
+{
+  struct ObjectHeader *temph = getPlace(toFree); //temph at block which should be after toFree  
+  toFree->_next = temph->_next;
+  toFree->_prev = temph;
+  temph->_next->_prev = toFree;
+  temph->_next = toFree;
 }
 void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
-  struct ObjectHeader *temph;
-  for (temph = _freeList; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
-    if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
-      break; //temph at block which should be after toFree  
-    toFree->_next = right->_next;
-    toFree->_prev = temph;
-    right->_next->_prev = toFree;
-    temph->_next = toFree;
+  struct ObjectHeader *temph= getPlace(toFree);  
+  toFree->_next = right->_next;
+  toFree->_prev = temph;
+  right->_next->_prev = toFree;
+  temph->_next = toFree;
 }
 void insertFree_LR(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
-  struct ObjectHeader *temph;
-  for (temph = _freeList; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
-      if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
-        break; //temph at block which should be after toFree  
-    toFree->_next = right->_next;
-    right->_next->_prev = toFree;
+  struct ObjectHeader *temph = getPlace(toFree);  
+  toFree->_next = right->_next;
+  right->_next->_prev = toFree;
 }
 void freeObject( void * ptr ) /*###########################################################*/
 {
