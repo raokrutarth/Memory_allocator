@@ -275,7 +275,7 @@ void insertFree(struct ObjectHeader * toFree)
   temph->_next->_prev = toFree;
   temph->_next = toFree;
 }
-void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
+void insertFree_R(struct ObjectHeader * toFree)
 {
   struct ObjectHeader *temph = getPlace(toFree);  
   toFree->_next = temph->_next->_next;
@@ -283,7 +283,7 @@ void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
   temph->_next->_next->_prev = toFree;
   temph->_next = toFree;
 }
-void insertFree_LR(struct ObjectHeader * toFree, struct ObjectHeader * right)
+void insertFree_LR(struct ObjectHeader * toFree)
 {
   struct ObjectHeader *temph = getPlace(toFree);  
   toFree->_next = temph->_next->_next;
@@ -343,9 +343,9 @@ void freeObject( void * ptr ) /*################################################
 		toFree->_allocated = 0;
 	}
 	  if (freeLeft && freeRight)  
-		insertFree_LR(toFree, right);
+		insertFree_LR(toFree);
 	  else if (freeRight)
-		insertFree_R(toFree, right);
+		insertFree_R(toFree);
 	  else if(!freeLeft)
 		insertFree(toFree);
 	/* fprintf(stderr,"insert   LR\n");//  */
