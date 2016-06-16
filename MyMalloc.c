@@ -336,7 +336,6 @@ void freeObject( void * ptr ) /*################################################
 		tempf->_objectSize += left->_objectSize;
 		tempf->_allocated = 0;
 		left->_objectSize += toFree->_objectSize;
-		toFree = left;
 	}
 	else
 	{
