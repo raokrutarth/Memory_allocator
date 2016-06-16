@@ -347,7 +347,7 @@ void freeObject( void * ptr ) /*################################################
 	  else if (freeRight)
 		insertFree_R(toFree);
 	  else if(!freeLeft)
-		insertFree(toFree);
+		fprintf(stderr,"insert   LR\n");//insertFree(toFree);
 	/* fprintf(stderr,"insert   LR\n");//  */
 }
 size_t objectSize( void * ptr )
