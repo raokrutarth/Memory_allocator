@@ -271,7 +271,6 @@ void insertFree(struct ObjectHeader * toFree)
     temph->_next->_prev = toFree;
     temph->_next = toFree;
 }
-
 void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
   struct ObjectHeader *temph;
@@ -351,7 +350,7 @@ void freeObject( void * ptr ) /*################################################
     insertFree_LR(toFree, right);
   else if (freeRight)
     insertFree_R(toFree, right);
-  else 
+  else if(!freeLeft)
     insertFree(toFree);
 }
 size_t objectSize( void * ptr )
