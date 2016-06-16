@@ -343,7 +343,7 @@ void freeObject( void * ptr ) /*################################################
 		toFree->_allocated = 0;
 	}
 	  if (freeLeft && freeRight)  
-		fprintf(stderr,"insert LR");//insertFree_LR(toFree, right);
+		fprintf(stderr,"insert LR\n");//insertFree_LR(toFree, right);
 	  else if (freeRight)
 		insertFree_R(toFree, right);
 	  else if(!freeLeft)
