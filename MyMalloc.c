@@ -317,13 +317,9 @@ void freeObject( void * ptr ) /*################################################
 	//toFree = the coalasced block header
 	//update next and prev pointers in freeList and in new free (coalesced block) after finding right position
 
-	/*for (temph = _freeList->_next; temph != _freeList; temph = temph->_next)
+	for (temph = _freeList->_next; temph != _freeList; temph = temph->_next)
     if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
-      break; //temph at block which should be after toFree	*/
-  temph = _freeList->_next;
-  while ( temph->_next != _freeList && temph->_next > toFree)
-    temph = temph->_next;
-
+      break; //temph at block which should be after toFree	
 	toFree->_next = temph->_next;
   toFree->_prev = temph;
   temph->_next->_prev = toFree;
