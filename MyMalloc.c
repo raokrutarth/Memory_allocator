@@ -270,10 +270,10 @@ struct ObjectHeader * getPlace(struct ObjectHeader *toFree)
 void insertFree(struct ObjectHeader * toFree)
 {
   struct ObjectHeader *temph = getPlace(toFree); //temph = block which should be before toFree 
-  toFree->_next = temph;
-  toFree->_prev = temph->_prev;
-  temph->_prev->_next = toFree;
-  temph->_prev = toFree;
+  toFree->_next = temph->_next;
+  toFree->_prev = temph;
+  temph->_next->_prev = toFree;
+  temph->_next = toFree;
 }
 void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
