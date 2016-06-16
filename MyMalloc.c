@@ -284,10 +284,10 @@ void freeObject( void * ptr ) /*################################################
 	{
 		//coalesce: update left's header size  & right's footer size
 		left->_objectSize += right->_objectSize + toFree->_objectSize;
-		tempf = (char*)right + right->_objectSize- sizeof(struct ObjectFooter);
+		tempf = ( (char*)right + right->_objectSize ) - sizeof(struct ObjectFooter);
 		tempf->_objectSize = left->_objectSize;
     toFree = left;
-  	}   		 
+  }   		 
 	else if( freeRight)
 	{
 		//coalesce: update center header size and right footer size
@@ -310,17 +310,21 @@ void freeObject( void * ptr ) /*################################################
 	else
 	{
 		//move tempf to center footer              
-		tempf = (char*)toFree + toFree->_objectSize - sizeof(struct ObjectFooter);
+		tempf = ((char*)toFree + toFree->_objectSize) - sizeof(struct ObjectFooter);
 		tempf->_allocated = 0;
 		toFree->_allocated = 0;
 	}
 	//toFree = the coalasced block header
 	//update next and prev pointers in freeList and in new free (coalesced block) after finding right position
-	for (temph = _freeList->_next; temph != _freeList; temph = temph->_next)
-		if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
-			break; //temph at block which should be after toFree	
-	toFree->_prev = temph;
+	/*for (temph = _freeList->_next; temph != _freeList; temph = temph->_next)
+    if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
+      break; //temph at block which should be after toFree	*/
+  temph = _freeList->_next;
+  while ( temph->_next != _freeList && temph->_next < toFree)
+    temph = temph->_next;
+
 	toFree->_next = temph->_next;
+  toFree->_prev = temph;
   temph->_next->_prev = toFree;
 	temph->_next = toFree;
 }
