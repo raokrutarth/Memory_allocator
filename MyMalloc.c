@@ -301,12 +301,12 @@ void freeObject( void * ptr ) /*################################################
 	//tempf =  left block's footer
 	tempf =  (char*)temph - sizeof(struct ObjectFooter); 
 	left = (char*)temph - tempf->_objectSize ;
-	if(tempf->_allocated <=0)
+	if(tempf->_allocated ==0)
 		freeLeft = 1;
 	//go to right block in heap
 	right = (char*)temph + toFree->_objectSize; 
 	// skipped left's footer and entire block(toFree)
-	if( right->_allocated <= 0)
+	if( right->_allocated == 0)
 		freeRight = 1;
 	if(freeRight && freeLeft)
 	{
