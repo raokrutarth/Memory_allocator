@@ -260,7 +260,7 @@ void * allocateObject( size_t size )
     pthread_mutex_unlock(&mutex);
     return NULL;
 }
-void insertFreeR(struct ObjectHeader * toFree)
+void insertFree(struct ObjectHeader * toFree)
 {
   struct ObjectHeader *temph;
   for (temph = _freeList; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
@@ -271,7 +271,19 @@ void insertFreeR(struct ObjectHeader * toFree)
     temph->_next->_prev = toFree;
     temph->_next = toFree;
 }
-void insertFreeLR(struct ObjectHeader * toFree, struct ObjectHeader * right)
+
+void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
+{
+  struct ObjectHeader *temph;
+  for (temph = _freeList; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
+    if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
+      break; //temph at block which should be after toFree  
+    toFree->_next = right->_next;
+    toFree->_prev = temph;
+    right->_next->_prev = toFree;
+    temph->_next = toFree;
+}
+void insertFree_LR(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
   struct ObjectHeader *temph;
   for (temph = _freeList; !(toFree > temph && toFree < temph->_next); temph = temph->_next)
@@ -335,10 +347,12 @@ void freeObject( void * ptr ) /*################################################
 	}
 	//toFree = the coalasced block header
 	//update next and prev pointers in freeList and in new free (coalesced block) after finding right position
-  if (!freeLeft)
-    insertFreeR(toFree);
-  else if (freeLeft && freeRight)  
-    insertFreeLR(toFree, right);
+  if (freeLeft && freeRight)  
+    insertFree_LR(toFree, right);
+  else if (freeRight)
+    insertFree_R(toFree, right);
+  else 
+    insertFree(toFree);
 }
 size_t objectSize( void * ptr )
 {
