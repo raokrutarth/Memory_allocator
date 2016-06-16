@@ -289,6 +289,7 @@ void insertFree_LR(struct ObjectHeader * toFree)
   toFree->_next = temph->_next->_next->_next;
   temph->_next->_next->_next->_prev = toFree;
   temph->_next = toFree;
+  toFree->_prev = temph;
   //temph->_next->_next = temph->_next->_next->_next; //temp fix
 }
 void freeObject( void * ptr ) /*###########################################################*/
