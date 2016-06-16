@@ -314,8 +314,8 @@ void freeObject( void * ptr ) /*################################################
 		left->_objectSize += right->_objectSize + toFree->_objectSize;
 		tempf = ( (char*)right + right->_objectSize ) - sizeof(struct ObjectFooter);
 		tempf->_objectSize = left->_objectSize;
-    toFree = left;
-  }   		 
+    	toFree = left;
+    }   		 
 	else if( freeRight)
 	{
 		//coalesce: update center header size and right footer size
@@ -342,12 +342,12 @@ void freeObject( void * ptr ) /*################################################
 		tempf->_allocated = 0;
 		toFree->_allocated = 0;
 	}
-  if (freeLeft && freeRight)  
-    insertFree_LR(toFree, right);
-  else if (freeRight)
-    fprintf(stderr,"");//insertFree_R(toFree, right);
-  else if(!freeLeft)
-    insertFree(toFree);
+	  if (freeLeft && freeRight)  
+		fprintf(stderr,"insert LR");//insertFree_LR(toFree, right);
+	  else if (freeRight)
+		insertFree_R(toFree, right);
+	  else if(!freeLeft)
+		insertFree(toFree);
 }
 size_t objectSize( void * ptr )
 {
