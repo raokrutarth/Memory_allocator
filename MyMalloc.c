@@ -291,7 +291,7 @@ void insertFree_LR(struct ObjectHeader * toFree, struct ObjectHeader * right)
 }
 void freeObject( void * ptr ) /*###########################################################*/
 {
-	increaseFreeCalls();
+	//increaseFreeCalls();
 	int freeLeft =0, freeRight=0;
 	struct ObjectHeader *temph, *toFree, *right, *left;
 	struct ObjectFooter *tempf;
