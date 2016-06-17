@@ -9,7 +9,7 @@ int allocations = 50000;
 int
 main( int argc, char **argv )
 {
-    /*char **alist = (char**)malloc(allocations*sizeof(char*));
+    char **alist = (char**)malloc(allocations*sizeof(char*));
     char *p1;
 
     printf("\n---- Running test4 ---\n");
@@ -41,7 +41,7 @@ main( int argc, char **argv )
     free(alist);
 
     printf("After total free\n");
-    print_list();*/
+    print_list();
 
     exit( 0 );
 }
