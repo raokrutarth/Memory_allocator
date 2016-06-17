@@ -274,15 +274,15 @@ struct ObjectHeader * getPlace2(struct ObjectHeader *toFree)
 }
 void insertFree(struct ObjectHeader * toFree)
 {
-  struct ObjectHeader *temph = getPlace2(toFree); //temph at block which should be after toFree  
-  /*toFree->_next = temph;
+  struct ObjectHeader *temph = getPlace(toFree); //temph at block which should be after toFree  
+  toFree->_next = temph;
   toFree->_prev = temph->_prev;
   temph->_prev->_next = toFree;
-  temph->_prev = toFree;*/
-  toFree->_prev = temph;
+  temph->_prev = toFree;
+  /*toFree->_prev = temph;
   toFree->_next = temph->_next;
   temph->_next->_prev = toFree;
-  temph->_next = toFree;
+  temph->_next = toFree;*/
 }
 void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
@@ -350,7 +350,7 @@ void freeObject( void * ptr ) /*################################################
 	else
 	{
 		//move tempf to center footer              
-		tempf = (struct ObjectFooter *) (((char*)toFree + toFree->_objectSize) - sizeof(struct ObjectFooter) );
+		tempf = (struct ObjectFooter *) ( ((char*)toFree + toFree->_objectSize) - sizeof(struct ObjectFooter) );
 		tempf->_allocated = 0;
 		toFree->_allocated = 0;
 	}
