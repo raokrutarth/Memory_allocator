@@ -56,11 +56,11 @@ runtest test1-2 "" none 10
 runtest test1-3 "" none 10
 runtest test1-4 "" none 10
 runtest test2 "" none 10
-runtest test3 "" none 10
-runtest test4 "" none 10
+#runtest test3 "" none 10
+#runtest test4 "" none 10
 runtest test5 "" none 10
 runtest test6 "" none 10
-runtest test7 "" none 10
+#runtest test7 "" none 10
 
 echo
 echo
