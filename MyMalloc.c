@@ -294,7 +294,9 @@ void insertFree_LR(struct ObjectHeader * left, struct ObjectHeader * right)
 {
   //struct ObjectHeader *temph = getPlace(toFree);
   if ( right->_prev == left )
-    fprintf(stderr, "prev of right = left\n");  
+    fprintf(stderr, " . "); 
+  else
+     fprintf(stderr, "prev of right != left\n");
   left->_next = right->_next;
   right->_next->_prev = left;
   right->_next = NULL;
