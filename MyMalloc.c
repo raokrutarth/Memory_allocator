@@ -290,7 +290,6 @@ void insertFree_LR(struct ObjectHeader * toFree)
   temph->_next->_next->_next->_prev = toFree;
   temph->_next = toFree;
   toFree->_prev = temph;
-  //temph->_next->_next = temph->_next->_next->_next; //temp fix
 }
 void freeObject( void * ptr ) /*###########################################################*/
 {
@@ -344,12 +343,12 @@ void freeObject( void * ptr ) /*################################################
 		tempf->_allocated = 0;
 		toFree->_allocated = 0;
 	}
-	  if (freeLeft && freeRight)  
-		insertFree_LR(toFree);
-	  else if (freeRight)
-		insertFree_R(toFree);
-	  else if(!freeLeft)
-		insertFree(toFree);
+  if (freeLeft && freeRight)  
+	   insertFree_LR(toFree);
+  else if (freeRight)
+	   insertFree_R(toFree);
+  else if(!freeLeft)
+	   insertFree(toFree);
 	/* fprintf(stderr,"insert   LR\n");//  */
 }
 size_t objectSize( void * ptr )
