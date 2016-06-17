@@ -290,7 +290,7 @@ void insertFree_LR(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
   //struct ObjectHeader *temph = getPlace(toFree);  
   toFree->_next = right->_next;
-  right->_next->_prev = toFree;
+  right->_next->_prev = right->_prev;
 }
 void freeObject( void * ptr ) /*###########################################################*/
 {
