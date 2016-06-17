@@ -299,7 +299,7 @@ void insertFree_LR(struct ObjectHeader * left, struct ObjectHeader * right)
     // fprintf(stderr, "right = %d \n", (int)right);
     // if(right->_prev == _freeList)
     //   fprintf(stderr, "prev of right = _freeList\n");
-    return;
+    right->_next = _freeList;
   }
   else
   {
