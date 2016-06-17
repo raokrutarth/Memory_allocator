@@ -280,16 +280,15 @@ void insertFree(struct ObjectHeader * toFree)
 }
 void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
-  struct ObjectHeader *temph = getPlace(toFree);  
-  /*toFree->_next = right->_next;
+  /*struct ObjectHeader *temph = getPlace(toFree);  
+  toFree->_next = right->_next;
   toFree->_prev = temph;
   right->_next->_prev = toFree;
   temph->_next = toFree;*/
-  toFree->_next = temph->_next;
-  toFree->_prev = temph->_prev;
-
-  temph->_next->_prev = toFree;
-  temph->_prev->_next = toFree;  
+  toFree->_next = right->_next;
+  toFree->_prev = right->_prev;
+  right->_next->_prev = toFree;
+  right->_prev->_next = toFree;  
 }
 void insertFree_LR(struct ObjectHeader * left, struct ObjectHeader * right)
 {
