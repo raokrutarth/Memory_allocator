@@ -280,8 +280,8 @@ void insertFree(struct ObjectHeader * toFree)
 }
 void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
-  struct ObjectHeader *temph = getPlace(toFree);  
-  /*toFree->_next = right->_next;
+  /*struct ObjectHeader *temph = getPlace(toFree);  
+  toFree->_next = right->_next;
   toFree->_prev = temph;
   right->_next->_prev = toFree;
   temph->_next = toFree;*/
@@ -290,11 +290,11 @@ void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
   right->_next->_prev = toFree;
   right->_prev->_next = toFree;  
 }
-void insertFree_LR(struct ObjectHeader * toFree, struct ObjectHeader * right)
+void insertFree_LR(struct ObjectHeader * left, struct ObjectHeader * right)
 {
   //struct ObjectHeader *temph = getPlace(toFree);  
-  toFree->_next = right->_next;
-  right->_next->_prev = right->_prev;
+  left->_next = right->_next;
+  right->_next->_prev = left;
 }
 void freeObject( void * ptr ) /*###########################################################*/
 {
@@ -321,7 +321,6 @@ void freeObject( void * ptr ) /*################################################
 		left->_objectSize += right->_objectSize + toFree->_objectSize;
 		tempf = (struct ObjectFooter *)  (( (char*)right + right->_objectSize ) - sizeof(struct ObjectFooter));
 		tempf->_objectSize = left->_objectSize;
-    	toFree = left;
     }   		 
 	else if( freeRight)
 	{
@@ -350,7 +349,7 @@ void freeObject( void * ptr ) /*################################################
 		toFree->_allocated = 0;
 	}
 	if (freeLeft && freeRight)
-		insertFree_LR(toFree, right);
+		insertFree_LR(left, right);
 	else if (freeRight)
 		insertFree_R(toFree, right);
 	else if(!freeLeft)
