@@ -286,8 +286,8 @@ void insertFree_R(struct ObjectHeader * toFree)
 void insertFree_LR(struct ObjectHeader * toFree)
 {
   struct ObjectHeader *temph = getPlace(toFree);  
-  toFree->_next = temph->_next->_next->_next;
-  temph->_next->_next->_next->_prev = toFree;
+  toFree->_next = temph->_next->_next;
+  temph->_next->_next->_prev = toFree;
   //temph->_next = toFree;
   //toFree->_prev = temph;
 }
