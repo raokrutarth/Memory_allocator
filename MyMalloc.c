@@ -263,12 +263,18 @@ void * allocateObject( size_t size )
 struct ObjectHeader * getPlace(struct ObjectHeader *toFree)
 {
   struct ObjectHeader *temph;
-  for (temph = _freeList; temph->_next != _freeList && temph > toFree; temph = temph->_next);
+  for (temph = _freeList; temph->_next != _freeList && temph < toFree; temph = temph->_next);
+  return temph;
+}
+struct ObjectHeader * getPlace2(struct ObjectHeader *toFree)
+{
+  struct ObjectHeader *temph;
+  for (temph = _freeList->_next; temph != _freeList && temph > toFree; temph = temph->_next);
   return temph;
 }
 void insertFree(struct ObjectHeader * toFree)
 {
-  struct ObjectHeader *temph = getPlace(toFree); //temph at block which should be after toFree  
+  struct ObjectHeader *temph = getPlace2(toFree); //temph at block which should be after toFree  
   toFree->_next = temph;
   toFree->_prev = temph->_prev;
   temph->_prev->_next = toFree;
