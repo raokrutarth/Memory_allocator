@@ -341,12 +341,13 @@ void freeObject( void * ptr ) /*################################################
 		tempf->_allocated = 0;
 		toFree->_allocated = 0;
 	}
-	  if (freeLeft && freeRight)  
+	if (freeLeft && freeRight)
 		insertFree_LR(toFree, right);
-	  else if (freeRight)
+	else if (freeRight)
 		insertFree_R(toFree, right);
-	  else if(!freeLeft)
+	else if(!freeLeft)
 		insertFree(toFree);
+	pthread_mutex_unlock(&mutex);
 	/* fprintf(stderr,"inser   LR\n");//  */
 }
 size_t objectSize( void * ptr )
