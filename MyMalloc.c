@@ -349,7 +349,7 @@ void freeObject( void * ptr ) /*################################################
 		toFree->_allocated = 0;
 	}
 	if (freeLeft && freeRight)
-		insertFree_LR(left, right);
+		insertFree_LR(toFree, right);
 	else if (freeRight)
 		insertFree_R(toFree, right);
 	else if(!freeLeft)
