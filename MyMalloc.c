@@ -294,9 +294,15 @@ void insertFree_LR(struct ObjectHeader * left, struct ObjectHeader * right)
 {
   //struct ObjectHeader *temph = getPlace(toFree);
   if ( right->_prev == left )
+  {
     fprintf(stderr, " . "); 
+  }
   else
-     fprintf(stderr, "prev of right != left\n");
+  {
+    right->_prev->_next = left;
+    fprintf(stderr, "prev of right != left\n");
+  }
+     
   left->_next = right->_next;
   right->_next->_prev = left;
   right->_next = NULL;
@@ -384,7 +390,7 @@ void print()
 
 void print_list()
 {
-  /*printf("FreeList: ");
+  printf("FreeList: ");
   if ( !_initialized ) 
   {
     _initialized = 1;
@@ -399,7 +405,7 @@ void print_list()
           printf("->");
       }
   }
-  printf("\n");*/
+  printf("\n");
 }
 
 void * getMemoryFromOS( size_t size )
