@@ -295,15 +295,19 @@ void insertFree_LR(struct ObjectHeader * left, struct ObjectHeader * right)
   //struct ObjectHeader *temph = getPlace(toFree);
   if ( right->_prev != left )
   {
-    fprintf(stderr, "prev of right = %d \n", (int)right->_prev);
-    fprintf(stderr, "right = %d \n", (int)right);
-    if(right->_prev == _freeList)
-      fprintf(stderr, "prev of right = _freeList\n");
-    right->_prev->_next = left;
+    // fprintf(stderr, "prev of right = %d \n", (int)right->_prev);
+    // fprintf(stderr, "right = %d \n", (int)right);
+    // if(right->_prev == _freeList)
+    //   fprintf(stderr, "prev of right = _freeList\n");
+    right->_prev->_next = right->_next;
     left->_prev = right->_prev;
+    right->_next->_prev = right->_next;
   }
-  left->_next = right->_next;
-  right->_next->_prev = left;
+  else
+  {
+    left->_next = right->_next;
+    right->_next->_prev = left;
+  } 
 }
 void freeObject( void * ptr ) /*###########################################################*/
 {
@@ -387,22 +391,22 @@ void print()
 
 void print_list()
 {
-  // printf("FreeList: ");
-  // if ( !_initialized ) 
-  // {
-  //   _initialized = 1;
-  //   initialize();
-  // }
-  // struct ObjectHeader * ptr = _freeList->_next;
-  // while(ptr != _freeList){
-  //     long offset = (long)ptr - (long)_memStart;
-  //     printf("[offset:%ld,size:%zd]",offset,ptr->_objectSize);
-  //     ptr = ptr->_next;
-  //     if(ptr != NULL){
-  //         printf("->");
-  //     }
-  // }
-  // printf("\n");
+  printf("FreeList: ");
+  if ( !_initialized ) 
+  {
+    _initialized = 1;
+    initialize();
+  }
+  struct ObjectHeader * ptr = _freeList->_next;
+  while(ptr != _freeList){
+      long offset = (long)ptr - (long)_memStart;
+      printf("[offset:%ld,size:%zd]",offset,ptr->_objectSize);
+      ptr = ptr->_next;
+      if(ptr != NULL){
+          printf("->");
+      }
+  }
+  printf("\n");
 }
 
 void * getMemoryFromOS( size_t size )
