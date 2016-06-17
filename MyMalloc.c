@@ -300,7 +300,6 @@ void insertFree_LR(struct ObjectHeader * left, struct ObjectHeader * right)
     // if(right->_prev == _freeList)
     //   fprintf(stderr, "prev of right = _freeList\n");
     right->_prev->_next = right->_next;
-    left->_prev = right->_prev;
     right->_next->_prev = right->_next;
   }
   else
