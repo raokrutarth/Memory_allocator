@@ -293,15 +293,11 @@ void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 void insertFree_LR(struct ObjectHeader * left, struct ObjectHeader * right)
 {
   //struct ObjectHeader *temph = getPlace(toFree);
-  if ( right->_prev == left )
-  {
-    fprintf(stderr, " . "); 
-  }
-  else
+  if ( right->_prev != left )
   {
     right->_prev->_next = left;
-    fprintf(stderr, "prev of right != left\n");
   }
+  //fprintf(stderr, "prev of right != left\n");
      
   left->_next = right->_next;
   right->_next->_prev = left;
