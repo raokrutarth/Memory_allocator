@@ -263,8 +263,8 @@ void * allocateObject( size_t size )
 struct ObjectHeader * getPlace(struct ObjectHeader *toFree)
 {
   struct ObjectHeader *temph;
-  for (temph = _freeList->_next; temph->_next != _freeList && temph > toFree; temph = temph->_next);
-      return temph;
+  for (temph = _freeList; temph->_next != _freeList && temph > toFree; temph = temph->_next);
+  return temph;
 }
 void insertFree(struct ObjectHeader * toFree)
 {
@@ -299,11 +299,11 @@ void freeObject( void * ptr ) /*################################################
 	//go to to left block in heap
 	//tempf =  left block's footer
 	tempf = (struct ObjectFooter *) ((char*)temph - sizeof(struct ObjectFooter)); 
-	left =(struct ObjectHeader *)( (char*)temph - tempf->_objectSize ) ;
+	left =(struct ObjectHeader *) ((char*)temph - tempf->_objectSize ) ;
 	if(tempf->_allocated <=0)
 		freeLeft = 1;
 	//go to right block in heap
-	right = (struct ObjectHeader *) ( (char*)temph + toFree->_objectSize) ; 
+	right = (struct ObjectHeader *) ((char*)temph + toFree->_objectSize) ; 
 	// skipped left's footer and entire block(toFree)
 	if( right->_allocated <= 0)
 		freeRight = 1;
