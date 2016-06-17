@@ -263,40 +263,31 @@ void * allocateObject( size_t size )
 struct ObjectHeader * getPlace(struct ObjectHeader *toFree)
 {
   struct ObjectHeader *temph;
-  for ( temph = _freeList; temph != _freeList && temph > toFree; temph = temph->_next);
-    //if ( toFree > temph || temph->_next == _freeList)
+  for ( temph = _freeList; temph != _freeList; temph = temph->_next)
+    if (temph >= temph->_next && (toFree > temph || toFree < temph->_next))
       return temph;
 }
 void insertFree(struct ObjectHeader * toFree)
 {
-  struct ObjectHeader *temph = getPlace(toFree); //temph = block which should be after toFree 
-  toFree->_next = temph;
-  toFree->_prev = temph->_prev;
-  temph->_prev->_next = toFree;
-  temph->_prev = toFree;
+  struct ObjectHeader *temph = getPlace(toFree); //temph at block which should be after toFree  
+  toFree->_next = temph->_next;
+  toFree->_prev = temph;
+  temph->_next->_prev = toFree;
+  temph->_next = toFree;
 }
 void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
-  //struct ObjectHeader *temph = getPlace(toFree);  //temph = right header
-  /*toFree->_next = temph->_next;
-  toFree->_prev = temph->_prev;
-  temph->_next->_prev = toFree;
-  temph->_next = toFree;  */
-  right->_prev->_next = right->_next;
-  right->_next->_prev = right->_prev;
-  insertFree(toFree);
-
-}
-void insertFree_LR(struct ObjectHeader * toFree, struct ObjectHeader * left, struct ObjectHeader * right)
-{
-  /*struct ObjectHeader *temph = getPlace(toFree);  
-  toFree->_next = temph->_next->_next;
-  temph->_next->_next->_prev = toFree;
+  struct ObjectHeader *temph = getPlace(toFree);  
+  toFree->_next = right->_next;
+  toFree->_prev = temph;
+  right->_next->_prev = toFree;
   temph->_next = toFree;
-  toFree->_prev = temph; */
-  left->_prev->_next = right->_next;
-  right->_next->_prev = left->_prev;
-  insertFree(left);
+}
+void insertFree_LR(struct ObjectHeader * toFree, struct ObjectHeader * right)
+{
+  struct ObjectHeader *temph = getPlace(toFree);  
+  toFree->_next = temph->_next->_next;
+  temph->_next->_prev = toFree;
 }
 void freeObject( void * ptr ) /*###########################################################*/
 {
@@ -308,28 +299,29 @@ void freeObject( void * ptr ) /*################################################
 	toFree = temph;
 	//go to to left block in heap
 	//tempf =  left block's footer
-	tempf =  (char*)temph - sizeof(struct ObjectFooter); 
-	left = (char*)temph - tempf->_objectSize ;
-	if(tempf->_allocated ==0)
+	tempf = (struct ObjectFooter *) ((char*)temph - sizeof(struct ObjectFooter)); 
+	left =(struct ObjectHeader *)( (char*)temph - tempf->_objectSize ) ;
+	if(tempf->_allocated <=0)
 		freeLeft = 1;
 	//go to right block in heap
-	right = (char*)temph + toFree->_objectSize; 
+	right = (struct ObjectHeader *) ( (char*)temph + toFree->_objectSize) ; 
 	// skipped left's footer and entire block(toFree)
-	if( right->_allocated == 0)
+	if( right->_allocated <= 0)
 		freeRight = 1;
 	if(freeRight && freeLeft)
 	{
 		//coalesce: update left's header size  & right's footer size
 		left->_objectSize += right->_objectSize + toFree->_objectSize;
-		tempf = ( (char*)right + right->_objectSize ) - sizeof(struct ObjectFooter);
+		tempf = (struct ObjectFooter *)  (( (char*)right + right->_objectSize ) - sizeof(struct ObjectFooter));
 		tempf->_objectSize = left->_objectSize;
-  }   		 
+    	toFree = left;
+    }   		 
 	else if( freeRight)
 	{
 		//coalesce: update center header size and right footer size
 		toFree->_objectSize += right->_objectSize;
 		//move tempf to right footer
-		tempf = ((char*)right + right->_objectSize) - sizeof(struct ObjectFooter);
+		tempf = (struct ObjectFooter *)  ( ((char*)right + right->_objectSize) - sizeof(struct ObjectFooter));
 		tempf->_objectSize = toFree->_objectSize;
 		toFree->_allocated = 0;
 	}	
@@ -337,25 +329,26 @@ void freeObject( void * ptr ) /*################################################
 	{
 		//coalesce: update center footer size and left's header size
 		//move tempf to center footer
-		tempf = (char*)tempf + toFree->_objectSize;
+		tempf = (struct ObjectFooter *)  ( (char*)tempf + toFree->_objectSize);
 		tempf->_objectSize += left->_objectSize;
 		tempf->_allocated = 0;
 		left->_objectSize += toFree->_objectSize;
+		toFree = left;
 	}
 	else
 	{
 		//move tempf to center footer              
-		tempf = ((char*)toFree + toFree->_objectSize) - sizeof(struct ObjectFooter);
+		tempf = (struct ObjectFooter *)  ( ((char*)toFree + toFree->_objectSize) - sizeof(struct ObjectFooter) );
 		tempf->_allocated = 0;
 		toFree->_allocated = 0;
 	}
-  if (freeLeft && freeRight)  
-	   insertFree_LR(toFree, left, right);
-  else if (freeRight)
-	   insertFree_R(toFree, right);
-  else if(!freeLeft)
-	   insertFree(toFree);
-	/* fprintf(stderr,"insert   LR\n");//  */
+	  if (freeLeft && freeRight)  
+		insertFree_LR(toFree, right);
+	  else if (freeRight)
+		insertFree_R(toFree, right);
+	  else if(!freeLeft)
+		insertFree(toFree);
+	/* fprintf(stderr,"inser   LR\n");//  */
 }
 size_t objectSize( void * ptr )
 {
