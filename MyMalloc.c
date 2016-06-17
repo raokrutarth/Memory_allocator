@@ -282,7 +282,7 @@ void insertFree(struct ObjectHeader * toFree)
   toFree->_prev = temph;
   toFree->_next = temph->_next;
   temph->_next->_prev = toFree;
-  temph->_next = toFree;  
+  temph->_next = toFree;
 }
 void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
