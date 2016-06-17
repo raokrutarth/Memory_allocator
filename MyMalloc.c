@@ -266,12 +266,6 @@ struct ObjectHeader * getPlace(struct ObjectHeader *toFree)
   for (temph = _freeList; temph->_next != _freeList && temph < toFree; temph = temph->_next);
   return temph;
 }
-struct ObjectHeader * getPlace2(struct ObjectHeader *toFree)
-{
-  struct ObjectHeader *temph;
-  for (temph = _freeList->_next; temph != _freeList && temph > toFree; temph = temph->_next);
-  return temph;
-}
 void insertFree(struct ObjectHeader * toFree)
 {
   struct ObjectHeader *temph = getPlace(toFree); //temph at block which should be after toFree  
@@ -286,13 +280,13 @@ void insertFree(struct ObjectHeader * toFree)
 }
 void insertFree_R(struct ObjectHeader * toFree, struct ObjectHeader * right)
 {
-  /*struct ObjectHeader *temph = getPlace(toFree);  
-  toFree->_next = right->_next;
+  struct ObjectHeader *temph = getPlace(toFree);  
+  /*toFree->_next = right->_next;
   toFree->_prev = temph;
   right->_next->_prev = toFree;
   temph->_next = toFree;*/
   toFree->_next = right->_next;
-  toFree->_prev = right->_prev;
+  toFree->_prev = temph->_prev;
   right->_next->_prev = toFree;
   right->_prev->_next = toFree;  
 }
