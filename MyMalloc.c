@@ -412,7 +412,7 @@ void * getMemoryFromOS( size_t size )
 {
   // Use sbrk() to get memory from OS
   _heapSize += size; 
-  void * _mem = sbrk( size*2 );
+  void * _mem = sbrk( size);
   if(!_initialized){ _memStart = _mem; }
   _numChunks++;
   return _mem;
