@@ -40,6 +40,7 @@ main( int argc, char **argv )
   free(mem1);
   printf("free(mem1))\n");
   print_list();
+  
 
   exit(0);
 }

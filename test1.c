@@ -42,6 +42,5 @@ main( int argc, char **argv )
   free(mem3);
   printf("free(mem3))\n");
   print_list();
-
   exit(0);
 }

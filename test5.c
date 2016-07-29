@@ -26,6 +26,5 @@ main( int argc, char **argv )
   printf("FREE LEFT:\n");
   print_list();
 
-
   exit(0);
 }

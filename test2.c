@@ -15,7 +15,8 @@ main( int argc, char **argv )
   
   //test performs many small allocations, up to 2MB
   int i;
-  for ( i = 0; i < allocations; i++ ) {
+  for ( i = 0; i < allocations; i++ ) 
+  {
     alist[i] = (char *) malloc(100 );
     p1 = alist[i];
     *p1 = 100;

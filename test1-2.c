@@ -37,6 +37,7 @@ main( int argc, char **argv )
   print_list();
   free(mem3);
   print_list();
+  
 
   exit(0);
 }

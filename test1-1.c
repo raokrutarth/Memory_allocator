@@ -19,6 +19,7 @@ main( int argc, char **argv )
 
   printf("After allocation\n");
   print_list();
+  
 
   free(mem1);
 

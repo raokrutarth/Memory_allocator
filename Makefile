@@ -49,10 +49,10 @@ runtestEXTRA:
     ./firefox
 
 commit:
-	-@date --rfc-2822 >> .git.local
-	-@git commit -am "Autocommit (Makefile)" >> .git.local 2>&1
-	-@git push >> .git.local 2>&1
+	#-@date --rfc-2822 >> .git.local
+	#-@git commit -am "Autocommit (Makefile)" >> .git.local 2>&1
+	#-@git push >> .git.local 2>&1
 
 clean:
-	rm -f *.o test0 test1 test1-1 test1-2 test1-3 test1-4 test2 test3 test4 test5 test6 test7 MyMalloc.so core a.out *.out *.txt
+	rm -f *.o test0 test1 test1-1 test1-2 test1-3 test1-4 test2 test3 test4 test5 test6 test7 MyMalloc.so core a.out *.out *.txt 
 

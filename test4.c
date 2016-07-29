@@ -27,7 +27,8 @@ main( int argc, char **argv )
     print_list();
     
     // Then free every *other* allocation
-    for (i = 0; i < allocations; i += 2) {
+    for (i = 0; i < allocations; i += 2) 
+    {
         free(alist[i]);
     }
     

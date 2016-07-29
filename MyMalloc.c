@@ -1,14 +1,6 @@
 //
-// CS252: MyMalloc Project
+// MyMalloc Project
 //
-// The current implementation gets memory from the OS
-// every time memory is requested and never frees memory.
-//
-// You will implement the free() component as indicated in the handout.
-// the allocator is implemented for you.
-// 
-// Also you will need to add the necessary locking mechanisms to
-// support multi-threaded programs.
 //
 
 #include <stdlib.h>

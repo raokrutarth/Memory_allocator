@@ -13,7 +13,8 @@ main( int argc, char **argv )
   printf("Allocate many objects\n");
   char * ptrs[15410];
   int i;
-  for (i = 0; i < allocations; i++ ) {
+  for (i = 0; i < allocations; i++ ) 
+  {
     char * p1 = (char *) malloc(100 );
     ptrs[i] = p1;
     *p1 = 100;

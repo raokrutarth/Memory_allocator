@@ -14,7 +14,8 @@ void *allocationThread(void *none){
     }
 }
 
-int main(){
+int main()
+{
     printf("\n---- Running test6 ---\n");
     int numThreads = 5;
     malloc(20);
